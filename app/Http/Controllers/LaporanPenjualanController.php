@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use App\Models\Transaksi;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 
 class LaporanPenjualanController extends Controller
@@ -106,6 +107,23 @@ class LaporanPenjualanController extends Controller
         // Lakukan agregasi
         $totalSales = $query->sum('total_amount'); // Asumsi kolom total penjualan Anda adalah 'total_amount'
         $totalTransaksi = $query->count();
+        $totalProduct = 0;
+
+        foreach ($query->get() as $transaksi) {
+            // $transaksi adalah objek model
+            // Akses properti menggunakan `->`
+            Log::info($transaksi);
+            if ($transaksi->daftar_barang) {
+                $items = json_decode($transaksi->daftar_barang, true);
+                if (is_array($items)) {
+                    foreach ($items as $item) {
+                        if (isset($item['qty'])) {
+                            $totalProduct += $item['qty'];
+                        }
+                    }
+                }
+            }
+        }
         
         return response()->json([
             'success' => true,
@@ -113,6 +131,7 @@ class LaporanPenjualanController extends Controller
             'data' => [
                 'total_sales' => $totalSales,
                 'total_transaksi' => $totalTransaksi,
+                'total_product' => $totalProduct,
             ]
         ], 200);
     }

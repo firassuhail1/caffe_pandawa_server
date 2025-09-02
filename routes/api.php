@@ -4,8 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\EOQController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\TableController;
 use App\Http\Controllers\RecipeController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\PurchaseController;
 use App\Http\Controllers\TransaksiController;
 use App\Http\Controllers\RawMaterialController;
@@ -43,3 +46,22 @@ Route::get('laporan-penjualan', [LaporanPenjualanController::class, 'laporan_pen
 Route::post('/eoq-settings', [EOQController::class, 'saveSetting']);         // Simpan EOQ
 Route::get('/calculate-eoq/{id}', [EOQController::class, 'calculate']);      // Hitung EOQ bahan baku
 Route::get('/all-eoq', [EOQController::class, 'listAll']); 
+
+Route::resource('tables', TableController::class);
+
+Route::get('/menu', [ProductController::class, 'index']);
+
+// Endpoint untuk manajemen pesanan
+Route::controller(OrderController::class)->group(function () {
+    Route::post('/orders', 'store'); // Untuk membuat pesanan baru
+    Route::get('/orders', 'index');  // Untuk melihat daftar pesanan
+    Route::get('/orders/{order}', 'show'); // Untuk melihat detail pesanan
+    Route::put('/orders/{order}/status', 'update'); // Untuk melihat detail pesanan
+    Route::delete('/orders/{order}', 'destroy'); // Untuk melihat detail pesanan
+});
+
+// Endpoint tambahan untuk F&B (dapur)
+Route::get('/orders/pending', [OrderController::class, 'getPendingOrders']);
+
+Route::post('/webhook/webhook', [WebhookController::class, 'webhook']); 
+Route::get('/webhook/check-payment-status', [WebhookController::class, 'checkPaymentStatus']); 

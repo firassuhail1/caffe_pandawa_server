@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Table;
 use Illuminate\Http\Request;
-use App\Models\MainCashBalance;
 use Illuminate\Support\Facades\Log;
 
-class MainCashBalanceController extends Controller
+class TableController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $data = MainCashBalance::where('id', 1)->first();
+        $data = Table::all();
 
-        return response()->json(['success' => true, 'data' => $data], 200);
+        return response()->json($data, 200);
     }
 
     /**
@@ -31,13 +31,17 @@ class MainCashBalanceController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        Table::create([
+            'table_number' => $request->table_number,
+        ]);
+
+        return response()->json(['success' => true], 200);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(string $id)
+    public function show(Table $table)
     {
         //
     }
@@ -45,7 +49,7 @@ class MainCashBalanceController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Table $table)
     {
         //
     }
@@ -53,16 +57,23 @@ class MainCashBalanceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Table $table)
     {
-        //
+        Log::info($request->table_number);
+        $table->update([
+                'table_number' => $request->table_number,
+            ]);
+
+        return response()->json(['success' => true], 200);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Table $table)
     {
-        //
+        $table->delete();
+
+        return response()->json(['success' => true], 200);
     }
 }
