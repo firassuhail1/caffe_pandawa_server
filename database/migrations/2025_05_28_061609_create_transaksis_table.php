@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->longText('daftar_barang');
-            $table->foreignId('cashier_session_id')->constrained('cashier_sessions')->onDelete('cascade');
+            $table->foreignId('cashier_session_id')->nullable()->constrained('cashier_sessions')->onDelete('cascade');
             $table->decimal('total_amount', 10, 2);
             $table->decimal('amount_paid', 10, 2);
             $table->decimal('change_amount', 10, 2);
